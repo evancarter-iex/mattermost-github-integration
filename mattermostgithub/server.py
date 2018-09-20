@@ -93,7 +93,8 @@ def root(hook_id, channel=None):
             msg = Status(data).updated()
 
     if msg:
-        post(msg, config.WEBHOOK_URL.rstrip('/') + '/' + hook_id, channel)
+        post(msg, config.MATTERMOST_WEBHOOK_URL.rstrip(
+            '/') + '/' + hook_id, channel)
         return "Notification posted to Mattermost"
     else:
         return "Not implemented", 400
