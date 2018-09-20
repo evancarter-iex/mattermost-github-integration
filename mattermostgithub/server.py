@@ -19,8 +19,10 @@ from mattermostgithub import app
 
 SECRET = hmac.new(config.SECRET.encode('utf8'), digestmod=hashlib.sha1) if config.SECRET else None
 
-@app.route(config.SERVER['hook'] or "/", methods=['POST'])
-def root():
+
+@app.route((config.SERVER['hook'] or '/') + '<hook_id>', methods=['POST'])
+@app.route((config.SERVER['hook'] or '/') + '<hook_id>/<channel>', methods=['POST'])
+def root(hook_id, channel=None):
     if request.json is None:
         print('Invalid Content-Type')
         return 'Content-Type must be application/json and the request body must contain valid JSON', 400
@@ -91,26 +93,8 @@ def root():
             msg = Status(data).updated()
 
     if msg:
-        hook_info = get_hook_info(data)
-        if hook_info:
-            url, channel = get_hook_info(data)
-
-            if hasattr(config, "GITHUB_IGNORE_ACTIONS") and \
-               event in config.GITHUB_IGNORE_ACTIONS and \
-               ((hasattr(data, "action") and \
-                data['action'] in config.GITHUB_IGNORE_ACTIONS[event]) \
-               or (hasattr(data, "ref_type") and \
-                   data['ref_type'] in config.GITHUB_IGNORE_ACTIONS[event])):
-                return "Notification action ignored (as per configuration)"
-
-            if hasattr(config, "REDIRECT_EVENTS") and \
-                    event in config.REDIRECT_EVENTS:
-                channel = config.REDIRECT_EVENTS[event]
-
-            post(msg, url, channel)
-            return "Notification successfully posted to Mattermost"
-        else:
-            return "Notification ignored (repository is blacklisted)."
+        post(msg, config.WEBHOOK_URL.rstrip('/') + '/' + hook_id, channel)
+        return "Notification posted to Mattermost"
     else:
         return "Not implemented", 400
 
