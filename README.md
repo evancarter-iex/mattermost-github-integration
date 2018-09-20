@@ -1,6 +1,6 @@
 # Github integration for Mattermost
 
-Inspired by [mattermost-integration-gitlab](https://github.com/NotSqrt/mattermost-integration-gitlab) this program creates a server using [flask](https://github.com/mitsuhiko/flask) that listens for incoming GitHub event webhooks. These are then processed, formatted, and eventually forwarded to Mattermost where they are displayed inside a specified channel.
+Inspired by [mattermost-integration-gitlab](https://github.com/NotSqrt/mattermost-integration-gitlab) this program creates a server using [flask](https://github.com/mitsuhiko/flask) that listens for incoming GitHub event webhooks. These are then processed, formatted, and eventually forwarded to Mattermost where they are displayed inside a specified channel. Forked to allow hitting the channel via the url rather than the config.py
 ![](docs/preview.png)
 
 ## Requirements
@@ -27,19 +27,11 @@ All requirements can also be installed using the command
 ```python
 USERNAME = "Github"
 ICON_URL = "yourdomain.org/github.png"
-MATTERMOST_WEBHOOK_URLS = {
-    'default' : ("yourdomain.org/hooks/hookid", "off-topic"),
-    'teamname/repositoryname' : ("yourdomain.org/hooks/hookid2", "repository-channel-id"),
-    'teamname' : ("yourdomain.org/hooks/hookid3", "town-square"),
-    'teamname/unimportantrepo' : None,
-}
-GITHUB_IGNORE_ACTIONS = {
-    "issues": ["labeled", "assigned"],
-}
+MATTERMOST_WEBHOOK_URL= "mattermost.blah/hooks/"
 SECRET = 'secretkey'
 SHOW_AVATARS = True
 SERVER = {
-    'hook': "/"
+    'hook': "/githubhook/"
 ,   'address': "0.0.0.0"
 ,   'port': 5000
 }
@@ -73,14 +65,8 @@ flask run
 ```
 
 ### Webhooks
-GitHub messages can be delegated to different Mattermost hooks. The order is as
-follows:
-- First try to find a hook for the repositories full name.
-- If that fails, try to find a hook for the organisation name.
-- Otherwise use the default hook.
+Example: https://mattermost.blah/hooks/123451asdada1/town-square will post to town-square channel
 
-Repositories can be blacklisted by setting them to `None` instead of
-`(url, channel)`.
 
 ### Ignore actions
 Specific Github events can be ignored by adding `GITHUB_IGNORE_ACTIONS` to `config.py`. In the example above `labeled` and `assigned` events for
