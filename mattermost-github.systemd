@@ -1,0 +1,15 @@
+[Unit]
+Description=Mattermost Github Webhook Listener
+After=multi-user.target
+
+[Service]
+Type=idle
+User=mattermost
+Group=mattermost
+ExecStart=/usr/bin/python /blah/server.py
+StandardOutput=syslog
+StandardError=syslog
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
