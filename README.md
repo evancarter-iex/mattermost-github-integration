@@ -65,7 +65,7 @@ flask run
 ```
 
 ### Webhooks
-Example: https://mattermost.blah/hooks/123451asdada1/town-square will post to town-square channel
+Example: https://mattermost.blah/hooks/123451asdada1?channel=town-square will post to town-square channel
 
 
 ### Ignore actions

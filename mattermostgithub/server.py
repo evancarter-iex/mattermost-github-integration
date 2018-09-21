@@ -21,7 +21,6 @@ SECRET = hmac.new(config.SECRET.encode('utf8'), digestmod=hashlib.sha1) if confi
 
 
 @app.route((config.SERVER['hook'] or '/') + '<hook_id>', methods=['POST'])
-@app.route((config.SERVER['hook'] or '/') + '<hook_id>/<channel>', methods=['POST'])
 def root(hook_id, channel=None):
     if request.json is None:
         print('Invalid Content-Type')
@@ -35,6 +34,7 @@ def root(hook_id, channel=None):
         if signature is None or sig2.hexdigest() != signature.split('=')[1]:
             return 'Invalid or missing X-Hub-Signature', 400
 
+    channel = request.args.get('channel', None)
     data = request.json
     event = request.headers['X-Github-Event']
 
